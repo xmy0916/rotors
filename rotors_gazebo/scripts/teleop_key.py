@@ -1,31 +1,5 @@
+# -*- coding: UTF-8 -*-
 #!/usr/bin/env python
-
-# Copyright (c) 2011, Willow Garage, Inc.
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
-#
-#    * Redistributions of source code must retain the above copyright
-#      notice, this list of conditions and the following disclaimer.
-#    * Redistributions in binary form must reproduce the above copyright
-#      notice, this list of conditions and the following disclaimer in the
-#      documentation and/or other materials provided with the distribution.
-#    * Neither the name of the Willow Garage, Inc. nor the names of its
-#      contributors may be used to endorse or promote products derived from
-#       this software without specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
 
 import rospy
 from geometry_msgs.msg import Twist
@@ -162,37 +136,34 @@ if __name__=="__main__":
                 print(msg)
                 status = 0
 
-            #twist = Twist()
+            # 创建MultiDOFJointTrajectory消息
             trajectory_msg = MultiDOFJointTrajectory()
             trajectory_msg.joint_names.append("base_link")
-
             trajectory_points = MultiDOFJointTrajectoryPoint()
 
-            twist = Twist()
-            control_linear_vel = makeSimpleProfile(control_linear_vel, target_linear_vel, (LIN_VEL_STEP_SIZE/2.0))
-            twist.linear.x = control_linear_vel; twist.linear.y = 0.0; twist.linear.z = 0.0
-
-            control_angular_vel = makeSimpleProfile(control_angular_vel, target_angular_vel, (ANG_VEL_STEP_SIZE/2.0))
-            twist.angular.x = 0.0; twist.angular.y = 0.0; twist.angular.z = control_angular_vel
-
+            #创建transform消息
             tran = Transform()
+            control_linear_vel = makeSimpleProfile(control_linear_vel, target_linear_vel, (LIN_VEL_STEP_SIZE/2.0)) # 限速
+            control_angular_vel = makeSimpleProfile(control_angular_vel, target_angular_vel, (ANG_VEL_STEP_SIZE/2.0)) # 限速
             pos_x += control_linear_vel
             pos_y += control_angular_vel
             tran.translation.z = 1
             tran.translation.x = pos_x
             tran.translation.y = pos_y
 
+            # 创建velocities消息
+            twist1 = Twist()
+            # 创建accelerations消息
             twist2 = Twist()
-            trajectory_points.transforms.append(tran)
-            trajectory_points.accelerations.append(twist)
-            trajectory_points.velocities.append(twist2)
-            # control_linear_vel = makeSimpleProfile(control_linear_vel, target_linear_vel, (LIN_VEL_STEP_SIZE/2.0))
-            # twist.linear.x = control_linear_vel; twist.linear.y = 0.0; twist.linear.z = 0.0
-            #
-            # control_angular_vel = makeSimpleProfile(control_angular_vel, target_angular_vel, (ANG_VEL_STEP_SIZE/2.0))
-            # twist.angular.x = 0.0; twist.angular.y = 0.0; twist.angular.z = control_angular_vel
 
+            # 合成trajectory_points消息
+            trajectory_points.transforms.append(tran)
+            trajectory_points.accelerations.append(twist1)
+            trajectory_points.velocities.append(twist2)
+
+            # 合成trajectory_msg消息
             trajectory_msg.points.append(trajectory_points)
+
             pub.publish(trajectory_msg)
 
     except:
