@@ -1,0 +1,23 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "",
+        "limitSymbolsToIncludedHeaders": true
+      },
+      "includePath": [
+        "/home/xmy/catkin_ws/devel/include",
+        "/home/xmy/racecar_ws/devel/include",
+        "/home/xmy/fetch_ws/devel/include",
+        "/home/xmy/wanderbot_ws/devel/include",
+        "/opt/ros/kinetic/include",
+        "/home/xmy/catkin_ws/src/rotors_simulator/rotors_control/include",
+        "/home/xmy/catkin_ws/src/rotors_simulator/rotors_gazebo_plugins/include",
+        "/home/xmy/catkin_ws/src/rotors_simulator/rotors_hil_interface/include",
+        "/home/xmy/catkin_ws/src/rotors_simulator/rotors_joy_interface/include",
+        "/usr/include"
+      ],
+      "name": "Linux"
+    }
+  ]
+}
